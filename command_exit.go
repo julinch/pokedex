@@ -16,7 +16,7 @@ func GetExitCommandModel(config *config) cliCommand {
 	return command
 }
 
-func commandExit(config *config) error {
+func commandExit(config *config, params string) error {
 	fmt.Print("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil

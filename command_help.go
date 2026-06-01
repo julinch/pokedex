@@ -21,7 +21,7 @@ func UpdateHelpCommandDescription(commandDescription string) {
 	AllCommandsDescriptions += commandDescription + "\n"
 }
 
-func commandHelp(config *config) error {
+func commandHelp(config *config, params string) error {
 	fmt.Print(AllCommandsDescriptions)
 	return nil
 }

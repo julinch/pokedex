@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	pokeapi "pokedex/internal/poke_api"
+
+	pokeapi "github.com/julinch/pokedex/internal/poke_api"
 )
 
 const MapbCommandName = "mapb"
@@ -16,7 +17,7 @@ func GetMapbCommandModel(config *config) cliCommand {
 	return command
 }
 
-func commandMapb(config *config) (err error) {
+func commandMapb(config *config, params string) (err error) {
 	page := pokeapi.Page{}
 	if config == nil || len(config.Next) == 0 {
 		page, err = updateConfig("", config)

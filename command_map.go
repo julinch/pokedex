@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	pokeapi "pokedex/internal/poke_api"
+
+	pokeapi "github.com/julinch/pokedex/internal/poke_api"
 )
 
 const MapCommandName = "map"
@@ -16,7 +17,7 @@ func GetMapCommandModel(config *config) cliCommand {
 	return command
 }
 
-func commandMap(config *config) (err error) {
+func commandMap(config *config, params string) (err error) {
 	page := pokeapi.Page{}
 	if config == nil || len(config.Next) == 0 {
 		fmt.Print("MAP config or config next nil\n\n\n")
