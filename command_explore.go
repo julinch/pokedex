@@ -38,9 +38,9 @@ func commandExplore(config *config, params string) (err error) {
 
 	for i := 0; i < len(area.PokemonEncounters); i++ {
 		encounter := area.PokemonEncounters[i]
-		fmt.Printf(encounter.Pokemon.Name + "\n")
+		fmt.Printf("%s", encounter.Pokemon.Name+"\n")
 	}
-	fmt.Printf(area.Name)
+	fmt.Printf("%s", area.Name)
 
 	return nil
 }

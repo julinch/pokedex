@@ -33,7 +33,6 @@ func runPokedex(config *config) {
 		switch len(cleanInput) {
 		case 0:
 			fmt.Print("Incorrect input! \n")
-			break
 		case 1:
 			if command, ok := commands[cleanInput[0]]; ok {
 				err := command.callback(config, "")
@@ -44,7 +43,6 @@ func runPokedex(config *config) {
 				fmt.Print("Unknown command \n")
 			}
 
-			break
 		case 2:
 			if command, ok := commands[cleanInput[0]]; ok {
 				err := command.callback(config, cleanInput[1])
@@ -55,9 +53,7 @@ func runPokedex(config *config) {
 				fmt.Print("Unknown command \n")
 			}
 
-			break
 		default:
-			break
 		}
 	}
 }
