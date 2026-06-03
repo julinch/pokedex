@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"errors"
@@ -10,26 +10,26 @@ import (
 const ExploreCommandName = "explore"
 const ExploreCommandDescription = "Explore the location"
 
-func GetExploreCommandModel(config *config) cliCommand {
-	var command cliCommand
-	command.name = ExploreCommandName
-	command.description = ExploreCommandDescription
-	command.callback = commandExplore
+func GetExploreCommandModel(Config *Config) CliCommand {
+	var command CliCommand
+	command.Name = ExploreCommandName
+	command.Description = ExploreCommandDescription
+	command.Callback = commandExplore
 	return command
 }
 
-func commandExplore(config *config, params string) (err error) {
+func commandExplore(Config *Config, params string) (err error) {
 	if len(params) == 0 {
 		return errors.New("Empty location name!\n")
 	}
 
 	area := pokeapi.LocationArea{}
 
-	if config == nil {
-		return fmt.Errorf("MAP config nil\n\n\n")
+	if Config == nil {
+		return fmt.Errorf("MAP Config nil\n\n\n")
 	}
 
-	area, err = config.PokeAPIClient.GetLocationArea(params, &config.PokeAPIClient.Cache)
+	area, err = Config.PokeAPIClient.GetLocationArea(params, &Config.PokeAPIClient.Cache)
 
 	if err != nil {
 		return err

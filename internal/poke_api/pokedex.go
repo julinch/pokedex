@@ -2,8 +2,6 @@ package pokeapi
 
 import (
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type Pokedex struct {
@@ -14,7 +12,8 @@ func (pokedex *Pokedex) AddCaughtPokemon(pokemon Pokemon) {
 	if pokedex.Pokemons == nil {
 		pokedex.Pokemons = make(map[string]Pokemon)
 	}
-	pokedex.Pokemons[uuid.New().String()] = pokemon
+
+	pokedex.Pokemons[pokemon.Name] = pokemon
 }
 
 func (pokedex *Pokedex) GetAllCaughtPokemonNames() (names string) {
@@ -22,7 +21,7 @@ func (pokedex *Pokedex) GetAllCaughtPokemonNames() (names string) {
 	namesList := make([]string, 0, len(pokedex.Pokemons))
 
 	for _, p := range pokedex.Pokemons {
-		namesList = append(namesList, p.PokemonName)
+		namesList = append(namesList, p.Name)
 	}
 
 	names = strings.Join(namesList, ", ")

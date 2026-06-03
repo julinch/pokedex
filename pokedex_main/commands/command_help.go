@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ const HelpCommandDescription = "Displays a help message"
 
 var AllCommandsDescriptions = "Welcome to the Pokedex!\nUsage:\n\n"
 
-func GetHelpCommandModel(config *config) cliCommand {
-	var command cliCommand
-	command.name = HelpCommandName
-	command.description = HelpCommandDescription
-	command.callback = commandHelp
+func GetHelpCommandModel(Config *Config) CliCommand {
+	var command CliCommand
+	command.Name = HelpCommandName
+	command.Description = HelpCommandDescription
+	command.Callback = commandHelp
 	return command
 }
 
@@ -21,7 +21,7 @@ func UpdateHelpCommandDescription(commandDescription string) {
 	AllCommandsDescriptions += commandDescription + "\n"
 }
 
-func commandHelp(config *config, params string) error {
+func commandHelp(Config *Config, params string) error {
 	fmt.Print(AllCommandsDescriptions)
 	return nil
 }

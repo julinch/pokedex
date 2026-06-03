@@ -133,8 +133,8 @@ func TestClient_GetPokemon(t *testing.T) {
 			cache:         &cache,
 
 			want: Pokemon{
-				PokemonName: "pikachu",
-				ID:          25,
+				Name: "pikachu",
+				ID:   25,
 			},
 			wantErr: false,
 
@@ -177,8 +177,8 @@ func TestClient_GetPokemon(t *testing.T) {
 			cache:         &cache,
 
 			want: Pokemon{
-				PokemonName: "pikachu",
-				ID:          25,
+				Name: "pikachu",
+				ID:   25,
 			},
 			wantErr: false,
 
@@ -224,7 +224,7 @@ func TestClient_GetPokemon(t *testing.T) {
 				t.Fatal("expected error but got nil")
 			}
 
-			if got.PokemonName != tt.want.PokemonName || got.ID != tt.want.ID {
+			if got.Name != tt.want.Name || got.ID != tt.want.ID {
 				t.Errorf("got %+v, want %+v", got, tt.want)
 			}
 		})

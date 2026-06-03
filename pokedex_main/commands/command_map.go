@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"fmt"
@@ -9,25 +9,25 @@ import (
 const MapCommandName = "map"
 const MapCommandDescription = "Show locations"
 
-func GetMapCommandModel(config *config) cliCommand {
-	var command cliCommand
-	command.name = MapCommandName
-	command.description = MapCommandDescription
-	command.callback = commandMap
+func GetMapCommandModel(Config *Config) CliCommand {
+	var command CliCommand
+	command.Name = MapCommandName
+	command.Description = MapCommandDescription
+	command.Callback = commandMap
 	return command
 }
 
-func commandMap(config *config, params string) (err error) {
+func commandMap(Config *Config, params string) (err error) {
 	page := pokeapi.Page{}
-	if config == nil || len(config.Next) == 0 {
-		page, err = updateConfig("", config)
+	if Config == nil || len(Config.Next) == 0 {
+		page, err = updateConfig("", Config)
 
 		if err != nil {
 			fmt.Print("Issues with poke api %w", err)
 			return err
 		}
 	} else {
-		page, err = updateConfig(config.Next, config)
+		page, err = updateConfig(Config.Next, Config)
 
 		if err != nil {
 			return err
