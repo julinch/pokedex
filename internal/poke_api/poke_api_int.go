@@ -10,7 +10,8 @@ import (
 	pokecahe "github.com/julinch/pokedex/internal/pokecache"
 )
 
-const pokedexEP = "https://pokeapi.co/api/v2/location-area/"
+const pokedexLocationAreaEP = "https://pokeapi.co/api/v2/location-area/"
+const pokedexPokemonEP = "https://pokeapi.co/api/v2/pokemon/"
 
 func GetPage(areaName string, cache *pokecahe.Cache) (page Page, err error) {
 
@@ -25,7 +26,7 @@ func GetPage(areaName string, cache *pokecahe.Cache) (page Page, err error) {
 	}
 
 	if len(areaName) == 0 {
-		areaName = pokedexEP
+		areaName = pokedexLocationAreaEP
 	}
 
 	res, err := http.Get(areaName)
@@ -59,7 +60,7 @@ func (c *Client) GetLocationArea(areaName string, cache *pokecahe.Cache) (area L
 		return LocationArea{}, errors.New("poke_api: areaName is empty")
 	}
 
-	areaURL := pokedexEP + areaName
+	areaURL := pokedexLocationAreaEP + areaName
 	if entry, is := cache.Get(areaURL); is {
 		err = json.Unmarshal(entry, &area)
 
@@ -103,5 +104,59 @@ func (c *Client) GetLocationArea(areaName string, cache *pokecahe.Cache) (area L
 	cache.Add(areaURL, data)
 
 	return area, nil
+}
 
+func (client *Client) GetPokemon(pokemonName string, cache *pokecahe.Cache) (pokemon Pokemon, err error) {
+	if len(pokemonName) == 0 {
+		return Pokemon{}, errors.New("poke_api:GetPokemon() pokemonName is empty\n")
+	}
+
+	pokemonURl := pokedexPokemonEP + pokemonName
+	if entry, is := cache.Get(pokemonURl); is {
+		err = json.Unmarshal(entry, &pokemon)
+
+		if err != nil {
+			return Pokemon{}, err
+		}
+
+		return pokemon, nil
+	}
+
+	req, err := http.NewRequest("GET", pokemonURl, nil)
+
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	resp, err := client.HttpClient.Do(req)
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		if resp.StatusCode == http.StatusNotFound {
+			return Pokemon{}, fmt.Errorf("No pokemon named %s found, try again\n", pokemonName)
+		} else {
+			return Pokemon{}, fmt.Errorf("poke_api:GetPokemon() status %d: %s\n", resp.StatusCode, body)
+		}
+	}
+
+	data, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	err = json.Unmarshal(data, &pokemon)
+
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	cache.Add(pokemonURl, data)
+
+	return pokemon, nil
 }

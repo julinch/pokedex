@@ -20,7 +20,6 @@ func GetMapCommandModel(config *config) cliCommand {
 func commandMap(config *config, params string) (err error) {
 	page := pokeapi.Page{}
 	if config == nil || len(config.Next) == 0 {
-		fmt.Print("MAP config or config next nil\n\n\n")
 		page, err = updateConfig("", config)
 
 		if err != nil {

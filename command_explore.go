@@ -20,14 +20,13 @@ func GetExploreCommandModel(config *config) cliCommand {
 
 func commandExplore(config *config, params string) (err error) {
 	if len(params) == 0 {
-		return errors.New("Empty location name!")
+		return errors.New("Empty location name!\n")
 	}
 
 	area := pokeapi.LocationArea{}
 
 	if config == nil {
-		fmt.Print("MAP config nil\n\n\n")
-
+		return fmt.Errorf("MAP config nil\n\n\n")
 	}
 
 	area, err = config.PokeAPIClient.GetLocationArea(params, &config.PokeAPIClient.Cache)

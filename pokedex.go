@@ -18,6 +18,7 @@ func runPokedex(config *config) {
 		MapCommandName:     GetMapCommandModel(config),
 		MapbCommandName:    GetMapbCommandModel(config),
 		ExploreCommandName: GetExploreCommandModel(config),
+		CatchCommandName:   GetCatchCommandModel(config),
 	}
 
 	for _, cmd := range commands {

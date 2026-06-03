@@ -52,7 +52,7 @@ func TestGetLocationArea_CacheHit(t *testing.T) {
 	body, _ := json.Marshal(expected)
 
 	cache := newCache()
-	cacheKey := pokedexEP + "canalave-city-area"
+	cacheKey := pokedexLocationAreaEP + "canalave-city-area"
 	cache.Add(cacheKey, body)
 
 	// no real server needed — cache should be hit before any HTTP call
@@ -101,5 +101,132 @@ func TestGetPage_CacheHit(t *testing.T) {
 	}
 	if page.Next != expected.Next {
 		t.Errorf("expected Next %q, got %q", expected.Next, page.Next)
+	}
+}
+
+func TestClient_GetPokemon(t *testing.T) {
+	// sample fake pokemon JSON (must match your struct)
+	mockPokemonJSON := `{
+		"name": "pikachu",
+		"id": 25
+	}`
+
+	cache := (pokecache.NewCache(time.Second))
+
+	tests := []struct {
+		name          string
+		timeout       time.Duration
+		cacheInterval time.Duration
+		pokemonName   string
+		cache         *pokecache.Cache
+		want          Pokemon
+		wantErr       bool
+
+		// internal test server behavior
+		serverHandler http.HandlerFunc
+	}{
+		{
+			name:          "successful fetch from API",
+			timeout:       time.Second,
+			cacheInterval: time.Second,
+			pokemonName:   "pikachu",
+			cache:         &cache,
+
+			want: Pokemon{
+				PokemonName: "pikachu",
+				ID:          25,
+			},
+			wantErr: false,
+
+			serverHandler: func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(mockPokemonJSON))
+			},
+		},
+		{
+			name:          "pokemon not found (404)",
+			timeout:       time.Second,
+			cacheInterval: time.Second,
+			pokemonName:   "unknownmon",
+			cache:         &cache,
+
+			want:    Pokemon{},
+			wantErr: true,
+
+			serverHandler: func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusNotFound)
+			},
+		},
+		{
+			name:          "empty pokemon name returns error",
+			timeout:       time.Second,
+			cacheInterval: time.Second,
+			pokemonName:   "",
+			cache:         &cache,
+
+			want:    Pokemon{},
+			wantErr: true,
+
+			serverHandler: nil, // won't be used
+		},
+		{
+			name:          "cache hit returns cached data (no server call)",
+			timeout:       time.Second,
+			cacheInterval: time.Second,
+			pokemonName:   "pikachu",
+			cache:         &cache,
+
+			want: Pokemon{
+				PokemonName: "pikachu",
+				ID:          25,
+			},
+			wantErr: false,
+
+			serverHandler: func(w http.ResponseWriter, r *http.Request) {
+				t.Fatal("server should not be called on cache hit")
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// var serverURL string
+			if tt.serverHandler != nil {
+				server := httptest.NewServer(tt.serverHandler)
+				defer server.Close()
+
+				// override base URL used by client (IMPORTANT)
+				// serverURL = server.URL + "/"
+			}
+
+			client := NewClient(tt.timeout, tt.cacheInterval)
+
+			// ⚠️ assuming you can override base URL like this:
+			// client.BaseURL = serverURL
+
+			// preload cache for cache test
+			if tt.name == "cache hit returns cached data (no server call)" {
+				data, _ := json.Marshal(tt.want)
+				tt.cache.Add(pokedexPokemonEP+"pikachu", data)
+			}
+
+			got, err := client.GetPokemon(tt.pokemonName, tt.cache)
+
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("unexpected error: %v", err)
+				}
+				return
+			}
+
+			if tt.wantErr {
+				t.Fatal("expected error but got nil")
+			}
+
+			if got.PokemonName != tt.want.PokemonName || got.ID != tt.want.ID {
+				t.Errorf("got %+v, want %+v", got, tt.want)
+			}
+		})
 	}
 }
