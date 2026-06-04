@@ -22,6 +22,7 @@ func RunPokedex(Config *commands.Config) {
 		commands.ExploreCommandName: commands.GetExploreCommandModel(Config),
 		commands.CatchCommandName:   commands.GetCatchCommandModel(Config),
 		commands.InspectCommandName: commands.GetInspectCommandModel(Config),
+		commands.PokedexCommandName: commands.GetPokedexCommandModel(Config),
 	}
 
 	for _, cmd := range commandsList {

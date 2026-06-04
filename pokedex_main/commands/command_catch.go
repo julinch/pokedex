@@ -37,7 +37,7 @@ func commandCatch(Config *Config, params string) (err error) {
 	if caught {
 		fmt.Printf("Success! You caught %s\n", pokemon.Name)
 		Config.Pokedex.AddCaughtPokemon(pokemon)
-		fmt.Printf("Your current caught pokemons are %s !\n", Config.Pokedex.GetAllCaughtPokemonNames())
+		fmt.Print("You may now inspect it with the inspect command.\n")
 	} else {
 		fmt.Printf("Fail! You didn't catch %s\n", pokemon.Name)
 	}
